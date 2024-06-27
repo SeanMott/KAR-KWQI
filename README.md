@@ -1,8 +1,9 @@
-# KAR-KWQI
-The Kirby Air Ride Workshop Quick Install format, is a custom file format for installing KAR Netplay tools and mods.
+# KAR Specs
+The [Warp Star Eco-System]() introduces various custom file formats for standarization and ease of use in the Kirby Air Ride community.
 
-# Version 0.1.0
-The first pre-release of the Kirby Air Ride Workshop Quick Install format spec.
-![0.1.0_Format_Struct](Assets/0_1_0/KWQI_Ver_0_1_0_Snapshot.png)
+Any tools developed for handling theses formats must meet theses spects to integrate with the rest of the Eco-System.
 
-Any parser for KWQI must meet this spec to properly parse the data. KWQI is a text YAML format that allows tools and mods for KAR Netplay to quickly be downloaded and managed.
+## Kirby Air Ride Workshop Quick Install (KWQI) 0.1.0
+KWQI is a JSON based text/binary format used for downloading and managing content. From custom ROMs to audio files and tools.
+
+The current spec defines the `SoftwareStage`, `ContentType`, `displayName`, long and short variants of the `description` and if the content is useable for specific OSes, providing a URL for downloading on that OS. And how to manage it's Package.
