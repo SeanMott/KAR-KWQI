@@ -37,45 +37,41 @@ public class KWQIPackaging
 	}
 
 	//unpacks a directory archive on Windows for KWQI
-	//7Zip is the go to and assumes the archive is a SFX (auto unpacking EXE)
+	//the first layer is a brotile
+	//the second is a Tar
 	static public bool UnpackArchive_Windows(string archivePackageDir, string archivePackageName, string outputDir,
-	bool shouldDeletePackedROMFileAfterUnpacking)
+	bool shouldDeletePackedROMFileAfterUnpacking, string brotilProgFilepath)
 	{
-		//unpacks KARphin
-		var p = new System.Diagnostics.Process();
-		p.StartInfo.FileName = archivePackageDir + "/" + archivePackageName + ".exe";
-		p.StartInfo.Arguments = "-o " + outputDir + " -y";
-		p.StartInfo.WorkingDirectory = outputDir;
-		p.Start();
-		p.WaitForExit();
+		//decompress the brotile
+		var hp = new System.Diagnostics.Process();
+		hp.StartInfo.FileName = brotilProgFilepath;
+		hp.StartInfo.Arguments = "--decompress -o " + archivePackageName + ".tar " + archivePackageName + ".br";
+		hp.StartInfo.WorkingDirectory = archivePackageDir;
+		hp.Start();
+		hp.WaitForExit();
 
-		//deletes the 7zip unpacking exe
+		//extract the Tar ball
+		hp = new System.Diagnostics.Process();
+		hp.StartInfo.FileName = "tar";
+		hp.StartInfo.Arguments = "-xvf " + archivePackageName + ".tar";
+		hp.StartInfo.WorkingDirectory = archivePackageDir;
+		hp.Start();
+		hp.WaitForExit();
+
+		//clean up the brotile and the tar ball
 		if(shouldDeletePackedROMFileAfterUnpacking)
-			System.IO.File.Delete(archivePackageDir + "/" + archivePackageName + ".exe");
+		{
+			if(System.IO.File.Exists(archivePackageDir + "/" + archivePackageName + ".br"))
+				System.IO.File.Delete(archivePackageDir + "/" + archivePackageName + ".br");
+			if(System.IO.File.Exists(archivePackageDir + "/" + archivePackageName + ".tar"))
+				System.IO.File.Delete(archivePackageDir + "/" + archivePackageName + ".tar");
+		}
 
 		return true;
 	}
 
-	//downloads KWQI content Archive on Windows
-	//Duma is the go to program for handling the downloads
-	//a 7Zip exe (auto extracting) Archive is assumed.
+	//downloads KWQI content Archive on Windows, regardless of the actual content
 	static public bool DownloadContent_Archive_Windows(out System.Diagnostics.Process p, string dumaProgFilepath,
-	 string displayName, string URL, string outputDir)
-	{
-		p = new System.Diagnostics.Process();
-		p.StartInfo.FileName = dumaProgFilepath;
-		p.StartInfo.Arguments = URL + 
-		" -O " + outputDir + "/" + displayName + ".exe";
-		p.StartInfo.WorkingDirectory = outputDir;
-		p.Start();
-
-		return true;
-	}
-
-	//downloads KWQI content ROM on Windows
-	//Duma is the go to program for handling the downloads
-	//a Brotil compressed file is assumed.
-	static public bool DownloadContent_ROM_Windows(out System.Diagnostics.Process p, string dumaProgFilepath,
 	 string displayName, string URL, string outputDir)
 	{
 		p = new System.Diagnostics.Process();
