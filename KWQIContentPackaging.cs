@@ -23,15 +23,16 @@ public class KWQIPackaging
 	{
 		//unpacks HP
 		var hp = new System.Diagnostics.Process();
+		hp.StartInfo.UseShellExecute = true;
 		hp.StartInfo.FileName = brotilProgFilepath;
-		hp.StartInfo.Arguments = "--decompress -o " + ROMName + ".iso " + ROMName + ".br";
-		hp.StartInfo.WorkingDirectory = workingDir;
+		hp.StartInfo.Arguments = "--decompress -o \"" + ROMName + ".iso\" \"" + ROMName + ".br\"";
+		hp.StartInfo.WorkingDirectory = "\"" + workingDir + "\"";
 		hp.Start();
 		hp.WaitForExit();
 
 		//deletes the brotil format
 		if(shouldDeletePackedROMFileAfterUnpacking)
-			System.IO.File.Delete(workingDir + "/" + ROMName + ".br");
+			System.IO.File.Delete("\"" + workingDir + "/" + ROMName + ".br\"");
 
 		return true;
 	}
@@ -39,32 +40,34 @@ public class KWQIPackaging
 	//unpacks a directory archive on Windows for KWQI
 	//the first layer is a brotile
 	//the second is a Tar
-	static public bool UnpackArchive_Windows(string archivePackageDir, string archivePackageName, string outputDir,
+	static public bool UnpackArchive_Windows(string _archivePackageDir, string _archivePackageName, string _outputDir,
 	bool shouldDeletePackedROMFileAfterUnpacking, string brotilProgFilepath)
 	{
 		//decompress the brotile
 		var hp = new System.Diagnostics.Process();
+		hp.StartInfo.UseShellExecute = true;
 		hp.StartInfo.FileName = brotilProgFilepath;
-		hp.StartInfo.Arguments = "--decompress -o " + archivePackageName + ".tar " + archivePackageName + ".br";
-		hp.StartInfo.WorkingDirectory = archivePackageDir;
+		hp.StartInfo.Arguments = "--decompress -o \"" + _archivePackageName + ".tar\" \"" + _archivePackageName + ".br\"";
+		hp.StartInfo.WorkingDirectory = "\"" + _archivePackageDir + "\"";
 		hp.Start();
 		hp.WaitForExit();
 
 		//extract the Tar ball
 		hp = new System.Diagnostics.Process();
+		hp.StartInfo.UseShellExecute = true;
 		hp.StartInfo.FileName = "tar";
-		hp.StartInfo.Arguments = "-xvf " + archivePackageName + ".tar";
-		hp.StartInfo.WorkingDirectory = archivePackageDir;
+		hp.StartInfo.Arguments = "-xvf \"" + _archivePackageName + ".tar\"";
+		hp.StartInfo.WorkingDirectory = "\"" + _archivePackageDir + "\"";
 		hp.Start();
 		hp.WaitForExit();
 
 		//clean up the brotile and the tar ball
 		if(shouldDeletePackedROMFileAfterUnpacking)
 		{
-			if(System.IO.File.Exists(archivePackageDir + "/" + archivePackageName + ".br"))
-				System.IO.File.Delete(archivePackageDir + "/" + archivePackageName + ".br");
-			if(System.IO.File.Exists(archivePackageDir + "/" + archivePackageName + ".tar"))
-				System.IO.File.Delete(archivePackageDir + "/" + archivePackageName + ".tar");
+			if(System.IO.File.Exists("\"" + _archivePackageDir + "/" + _archivePackageName + ".br\""))
+				System.IO.File.Delete("\"" + _archivePackageDir + "/" + _archivePackageName + ".br\"");
+			if(System.IO.File.Exists("\"" + _archivePackageDir + "/" + _archivePackageName + ".tar\""))
+				System.IO.File.Delete("\"" + _archivePackageDir + "/" + _archivePackageName + ".tar\"");
 		}
 
 		return true;
@@ -74,11 +77,14 @@ public class KWQIPackaging
 	static public bool DownloadContent_Archive_Windows(out System.Diagnostics.Process p, string dumaProgFilepath,
 	 string displayName, string URL, string outputDir)
 	{
+		//System.IO.Path outputDir = new System.IO.Path(_outputDir);
+
 		p = new System.Diagnostics.Process();
-		p.StartInfo.FileName = dumaProgFilepath;
+		p.StartInfo.UseShellExecute = true;
+		p.StartInfo.FileName = "\"" + dumaProgFilepath + "\"";
 		p.StartInfo.Arguments = URL + 
-		" -O " + outputDir + "/" + displayName + ".br";
-		p.StartInfo.WorkingDirectory = outputDir;
+		" -O \"" + outputDir + "/" + displayName + ".br\"";
+		p.StartInfo.WorkingDirectory = "\"" + outputDir + "\"";
 		p.Start();
 
 		return true;
