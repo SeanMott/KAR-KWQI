@@ -1,5 +1,5 @@
 /*
-0.1.0 implementation of how the KAR Workshop Quick Install format should be packaged and unpackaged after downloading.
+0.2.0 implementation of how the KAR Workshop Quick Install format should be packaged and unpackaged after downloading.
 On all platforms.
 
 The spec for the project and latest version can be found at the Github.
@@ -9,25 +9,60 @@ https://github.com/SeanMott/KAR-KWQI
 
 using System.IO;
 
+//defines a main class for handling the package
 public class KWQIPackaging
 {
 	//adds double quotes around string literals if needed
-	/*static public string AddQuotesIfRequired(string path)
+	static public string AddQuotesIfRequired(string path)
 	{
     	return !string.IsNullOrWhiteSpace(path) ? 
         	path.Contains(" ") && (!path.StartsWith("\"") && !path.EndsWith("\"")) ? 
             	"\"" + path + "\"" : path : 
             	string.Empty;
-	}*/
+	}
+
+	//copies files/folders from one directory into another
+	public static void CopyAllDirContents(DirectoryInfo source, DirectoryInfo target)
+    {
+		if(!Directory.Exists(target.FullName))
+        	Directory.CreateDirectory(target.FullName);
+
+        // Copy each file into the new directory.
+        foreach (FileInfo fi in source.GetFiles())
+        {
+            System.Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
+            fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+        }
+
+        // Copy each subdirectory using recursion.
+        foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+        {
+            DirectoryInfo nextTargetSubDir =
+                target.CreateSubdirectory(diSourceSubDir.Name);
+            CopyAllDirContents(diSourceSubDir, nextTargetSubDir);
+        }
+    }
+
+	//copies all the files/folders from one directory into another
+	public static void CopyAllDirContents(string sourceDirectory, string targetDirectory)
+    {
+        DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
+        DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
+
+        CopyAllDirContents(diSource, diTarget);
+    }
 
 	//copies the contents of a file into another directory
-	static public void CopyDirectoryContents(string sourceDir, string destinationDir)
+	/*static public void CopyDirectoryContents(string sourceDir, string destinationDir)
 	{
         // Ensure the destination directory exists
-        Directory.CreateDirectory(destinationDir);
+        if(Directory.Exists(destinationDir))
+		{
+			Directory.CreateDirectory(destinationDir);
+		}
 
         // Copy all the files from the source directory to the destination directory
-        foreach (string file in Directory.GetFiles(sourceDir))
+        foreach (FileInfo file in Directory.GetFiles(sourceDir))
         {
             string fileName = Path.GetFileName(file);
             string destFile = Path.Combine(destinationDir, fileName);
@@ -41,7 +76,7 @@ public class KWQIPackaging
             string destSubdir = Path.Combine(destinationDir, subdirName);
             CopyDirectoryContents(subdir, destSubdir); // Recursive call to copy subdirectories
         }
-    }
+    }*/
 
 	//unpacks a directory archive on Windows for KWQI
 	//the first layer is a brotile
@@ -49,8 +84,10 @@ public class KWQIPackaging
 	static public bool UnpackArchive_Windows(string _archivePackageDir, string _archivePackageName, string _outputDir,
 	bool shouldDeletePackedROMFileAfterUnpacking, string _brotilProgFilepath, string _sevenZipProgFilepath)
 	{
-		string brotilPackageFP = "\"" + _archivePackageDir + "/" + _archivePackageName + ".br\"";
-		string tarPackageFP = "\"" + _archivePackageDir + "/" + _archivePackageName + ".tar\"";
+		string _brotilPackageFP = _archivePackageDir + "/" + _archivePackageName + ".br";
+		string brotilPackageFP = "\"" + _brotilPackageFP + "\"";
+		string _tarPackageFP = _archivePackageDir + "/" + _archivePackageName + ".tar";
+		string tarPackageFP = "\"" + _tarPackageFP + "\"";
 		string extractedPackageFP = "\"" + _outputDir + "/" + _archivePackageName + "\"";
 		string workingDir = "\"" + _archivePackageDir + "\"";
 
@@ -68,20 +105,25 @@ public class KWQIPackaging
 
 		//extract the Tar ball
 		hp = new System.Diagnostics.Process();
-		hp.StartInfo.UseShellExecute = true;
-		hp.StartInfo.FileName = sevenZipProgFilepath;
-		hp.StartInfo.Arguments = "x " + tarPackageFP + " -o" + extractedPackageFP;
-		hp.StartInfo.WorkingDirectory = workingDir;
+		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = "tar",
+            Arguments = $"-xvf \"{_tarPackageFP}\" -C \"{_outputDir}\"",
+            RedirectStandardOutput = false,
+            RedirectStandardError = false,
+            UseShellExecute = true,
+            CreateNoWindow = false
+        };
 		hp.Start();
 		hp.WaitForExit();
 
 		//clean up the brotile and the tar ball
 		if(shouldDeletePackedROMFileAfterUnpacking)
 		{
-			if(System.IO.File.Exists(brotilPackageFP))
-				System.IO.File.Delete(brotilPackageFP);
-			if(System.IO.File.Exists(tarPackageFP))
-				System.IO.File.Delete(tarPackageFP);
+			if(System.IO.File.Exists(_brotilPackageFP))
+				System.IO.File.Delete(_brotilPackageFP);
+			if(System.IO.File.Exists(_tarPackageFP))
+				System.IO.File.Delete(_tarPackageFP);
 		}
 
 		return true;

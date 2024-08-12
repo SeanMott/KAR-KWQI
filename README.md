@@ -3,6 +3,14 @@ The [Warp Star Eco-System]() introduces various custom file formats for standari
 
 Any tools developed for handling theses formats must meet theses spects to integrate with the rest of the Eco-System.
 
+## Kirby Air Ride Workshop Quick Install (KWQI) 0.2.0
+
+This introduces a standardization for the folder structure of KAR Workshop and the game.
+This folder structure can be found [here](Docs/KARWorkshopFolderStructure.md).
+
+Also includes a rewrite of how Archives are handled
+
+
 ## Kirby Air Ride Workshop Quick Install (KWQI) 0.1.0
 KWQI is a JSON based text/binary format used for downloading and managing content. From custom ROMs to audio files and tools.
 

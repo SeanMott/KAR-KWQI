@@ -1,5 +1,5 @@
 /*
-0.1.0 implementation of the KAR Workshop Quick Install format.
+0.2.0 implementation of the KAR Workshop Quick Install format.
 
 KWQI is a JSON based text/binary format used for downloading and managing content. 
 From custom ROMs to audio files and tools.
