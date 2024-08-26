@@ -24,6 +24,8 @@ public struct KWInstallFile
 //defines a global for handling the KWStructure
 public class KWStructure
 {
+    //------HIGH LEVEL DIRECTORIES------//
+
     //gets a string name for netplay client directory
     public static string GetStringDirectoryName_NetplayClients() {return "Clients";}
 
@@ -32,9 +34,6 @@ public class KWStructure
 
     //gets a string name for mods directory
     public static string GetStringDirectoryName_Mods() {return "Mods";}
-
-     //gets a string name for mods sub-directory for Skin Packs
-    public static string GetStringDirectoryName_Mods_SkinPacks() {return "SkinPacks";}
 
     //gets a string name for tools directory
     public static string GetStringDirectoryName_Tools() {return "Tools";}
@@ -47,6 +46,14 @@ public class KWStructure
 
     //gets a string name for Replays directory
     public static string GetStringDirectoryName_Replays() {return "Replays";}
+
+    //------SUB DIRECTORIES-------//
+
+     //gets a string name for mods sub-directory for Skin Packs
+    public static string GetStringDirectoryName_Mods_SkinPacks() {return "SkinPacks";}
+
+    //gets a string name for mods sub-directory for Homebrew
+    public static string GetStringDirectoryName_Mods_Homebrew() {return "Homebrew";}
 
     //generates a netplay client directory
     public static string GenerateKWStructure_Directory_NetplayClients(string rootDir)
@@ -74,17 +81,6 @@ public class KWStructure
     public static string GenerateKWStructure_Directory_Mods(string rootDir)
     {
         string dir = rootDir + "/" + GetStringDirectoryName_Mods();
-
-        if (!Directory.Exists(dir))
-			Directory.CreateDirectory(dir);
-
-        return dir;
-    }
-
-    //generates mod sub directory for Skin Packs
-    public static string GenerateKWStructure_SubDirectory_Mod_SkinPacks(string rootDir)
-    {
-        string dir = rootDir + GenerateKWStructure_Directory_Mods(rootDir) + "/" + GetStringDirectoryName_Mods_SkinPacks();
 
         if (!Directory.Exists(dir))
 			Directory.CreateDirectory(dir);
@@ -129,6 +125,28 @@ public class KWStructure
     public static string GenerateKWStructure_Directory_Replays(string rootDir)
     {
         string dir = rootDir + "/" + GetStringDirectoryName_Replays();
+
+        if (!Directory.Exists(dir))
+			Directory.CreateDirectory(dir);
+
+        return dir;
+    }
+
+    //generates mod sub directory for Skin Packs
+    public static string GenerateKWStructure_SubDirectory_Mod_SkinPacks(string rootDir)
+    {
+        string dir = GenerateKWStructure_Directory_Mods(rootDir) + "/" + GetStringDirectoryName_Mods_SkinPacks();
+
+        if (!Directory.Exists(dir))
+			Directory.CreateDirectory(dir);
+
+        return dir;
+    }
+
+    //generates mod sub directory for Homebrew
+    public static string GenerateKWStructure_SubDirectory_Mod_Hombrew(string rootDir)
+    {
+        string dir = GenerateKWStructure_Directory_Mods(rootDir) + "/" + GetStringDirectoryName_Mods_Homebrew();
 
         if (!Directory.Exists(dir))
 			Directory.CreateDirectory(dir);
