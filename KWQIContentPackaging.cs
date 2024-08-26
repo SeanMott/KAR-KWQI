@@ -52,32 +52,6 @@ public class KWQIPackaging
         CopyAllDirContents(diSource, diTarget);
     }
 
-	//copies the contents of a file into another directory
-	/*static public void CopyDirectoryContents(string sourceDir, string destinationDir)
-	{
-        // Ensure the destination directory exists
-        if(Directory.Exists(destinationDir))
-		{
-			Directory.CreateDirectory(destinationDir);
-		}
-
-        // Copy all the files from the source directory to the destination directory
-        foreach (FileInfo file in Directory.GetFiles(sourceDir))
-        {
-            string fileName = Path.GetFileName(file);
-            string destFile = Path.Combine(destinationDir, fileName);
-            File.Copy(file, destFile, true); // true to overwrite existing files
-        }
-
-        // Copy all the subdirectories from the source directory to the destination directory
-        foreach (string subdir in Directory.GetDirectories(sourceDir))
-        {
-            string subdirName = Path.GetFileName(subdir);
-            string destSubdir = Path.Combine(destinationDir, subdirName);
-            CopyDirectoryContents(subdir, destSubdir); // Recursive call to copy subdirectories
-        }
-    }*/
-
 	//unpacks a directory archive on Windows for KWQI
 	//the first layer is a brotile
 	//the second is a Tar
@@ -133,8 +107,6 @@ public class KWQIPackaging
 	static public bool DownloadContent_Archive_Windows(out System.Diagnostics.Process p, string _dumaProgFilepath,
 	 string displayName, string URL, string outputDir)
 	{
-		//System.IO.Path outputDir = new System.IO.Path(_outputDir);
-
 		string workingDir = "\"" + outputDir + "\"";
 		string brotilPackageFP = "\"" + outputDir + "/" + displayName + ".br\"";
 
@@ -144,6 +116,25 @@ public class KWQIPackaging
 		p.StartInfo.UseShellExecute = true;
 		p.StartInfo.FileName = dumaProgFilepath;
 		p.StartInfo.Arguments = URL + " -O " + brotilPackageFP;
+		p.StartInfo.WorkingDirectory = workingDir;
+		p.Start();
+
+		return true;
+	}
+
+	//downloads gekko codes on Windows
+	static public bool DownloadContent_GekkoCodes_Windows(out System.Diagnostics.Process p, string _dumaProgFilepath,
+	 string displayName, string URL, string outputDir)
+	{
+		string workingDir = "\"" + outputDir + "\"";
+		string codeFP = "\"" + outputDir + "/" + displayName + ".ini\"";
+
+		string dumaProgFilepath = "\"" + _dumaProgFilepath + "\"";
+
+		p = new System.Diagnostics.Process();
+		p.StartInfo.UseShellExecute = true;
+		p.StartInfo.FileName = dumaProgFilepath;
+		p.StartInfo.Arguments = URL + " -O " + codeFP;
 		p.StartInfo.WorkingDirectory = workingDir;
 		p.Start();
 
