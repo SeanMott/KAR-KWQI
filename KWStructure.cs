@@ -55,6 +55,12 @@ public class KWStructure
     //gets a string name for mods sub-directory for Homebrew
     public static string GetStringDirectoryName_Mods_Homebrew() {return "Homebrew";}
 
+    //gets a string name for clients sub-directory for User
+    public static string GetStringDirectoryName_Clients_User() {return "User";}
+
+    //gets a string name for clients sub-directory User sub directory for Game Settings
+    public static string GetStringDirectoryName_Clients_User_GameSettings() {return "GameSettings";}
+
     //generates a netplay client directory
     public static string GenerateKWStructure_Directory_NetplayClients(string rootDir)
     {
@@ -125,6 +131,28 @@ public class KWStructure
     public static string GenerateKWStructure_Directory_Replays(string rootDir)
     {
         string dir = rootDir + "/" + GetStringDirectoryName_Replays();
+
+        if (!Directory.Exists(dir))
+			Directory.CreateDirectory(dir);
+
+        return dir;
+    }
+
+    //generates Clients sub directory for User
+    public static string GenerateKWStructure_SubDirectory_Clients_User(string rootDir)
+    {
+        string dir = GenerateKWStructure_Directory_NetplayClients(rootDir) + "/" + GetStringDirectoryName_Clients_User();
+
+        if (!Directory.Exists(dir))
+			Directory.CreateDirectory(dir);
+
+        return dir;
+    }
+
+    //generates Clients sub directory User sub directory Game Settings
+    public static string GenerateKWStructure_SubDirectory_Clients_User_GameSettings(string rootDir)
+    {
+        string dir = GenerateKWStructure_SubDirectory_Clients_User(rootDir) + "/" + GetStringDirectoryName_Clients_User_GameSettings();
 
         if (!Directory.Exists(dir))
 			Directory.CreateDirectory(dir);
