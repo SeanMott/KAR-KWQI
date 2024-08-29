@@ -55,25 +55,24 @@ public class KWQIPackaging
 	//unpacks a directory archive on Windows for KWQI
 	//the first layer is a brotile
 	//the second is a Tar
-	static public bool UnpackArchive_Windows(string _archivePackageDir, string _archivePackageName, string _outputDir,
-	bool shouldDeletePackedROMFileAfterUnpacking, string _brotilProgFilepath, string _sevenZipProgFilepath)
+	static public bool UnpackArchive_Windows(string archivePackageDir, string archivePackageName, string outputDir,
+	bool shouldDeletePackedROMFileAfterUnpacking, string brotilProgFilepath)
 	{
-		string _brotilPackageFP = _archivePackageDir + "/" + _archivePackageName + ".br";
-		string brotilPackageFP = "\"" + _brotilPackageFP + "\"";
-		string _tarPackageFP = _archivePackageDir + "/" + _archivePackageName + ".tar";
-		string tarPackageFP = "\"" + _tarPackageFP + "\"";
-		string extractedPackageFP = "\"" + _outputDir + "/" + _archivePackageName + "\"";
-		string workingDir = "\"" + _archivePackageDir + "\"";
-
-		string brotilProgFilepath = "\"" + _brotilProgFilepath + "\"";
-		string sevenZipProgFilepath = "\"" + _sevenZipProgFilepath + "\"";
+		string brotilPackageFP = $"{archivePackageDir}/{archivePackageName}.br";
+		string tarPackageFP = $"{archivePackageDir}/{archivePackageName}.tar";
 
 		//decompress the brotile
 		var hp = new System.Diagnostics.Process();
-		hp.StartInfo.UseShellExecute = true;
-		hp.StartInfo.FileName = brotilProgFilepath;
-		hp.StartInfo.Arguments = "--decompress -o " + tarPackageFP + " " + brotilPackageFP;
-		hp.StartInfo.WorkingDirectory = workingDir;
+		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
+		{
+            FileName = brotilProgFilepath,
+            Arguments = $"--decompress \"{brotilPackageFP}\" -o \"{tarPackageFP}\"",
+			WorkingDirectory = archivePackageDir,
+            RedirectStandardOutput = false,
+            RedirectStandardError = false,
+            UseShellExecute = true,
+            CreateNoWindow = false
+        };
 		hp.Start();
 		hp.WaitForExit();
 
@@ -82,7 +81,7 @@ public class KWQIPackaging
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
         {
             FileName = "tar",
-            Arguments = $"-xvf \"{_tarPackageFP}\" -C \"{_outputDir}\"",
+            Arguments = $"-xvf \"{tarPackageFP}\" -C \"{outputDir}\"",
             RedirectStandardOutput = false,
             RedirectStandardError = false,
             UseShellExecute = true,
@@ -94,10 +93,10 @@ public class KWQIPackaging
 		//clean up the brotile and the tar ball
 		if(shouldDeletePackedROMFileAfterUnpacking)
 		{
-			if(System.IO.File.Exists(_brotilPackageFP))
-				System.IO.File.Delete(_brotilPackageFP);
-			if(System.IO.File.Exists(_tarPackageFP))
-				System.IO.File.Delete(_tarPackageFP);
+			if(System.IO.File.Exists(brotilPackageFP))
+				System.IO.File.Delete(brotilPackageFP);
+			if(System.IO.File.Exists(tarPackageFP))
+				System.IO.File.Delete(tarPackageFP);
 		}
 
 		return true;
@@ -107,16 +106,15 @@ public class KWQIPackaging
 	static public bool DownloadContent_Archive_Windows(out System.Diagnostics.Process p, string _dumaProgFilepath,
 	 string displayName, string URL, string outputDir)
 	{
-		string workingDir = "\"" + outputDir + "\"";
-		string brotilPackageFP = "\"" + outputDir + "/" + displayName + ".br\"";
+		string brotilPackageFP = $"{outputDir}/{displayName}.br\"";
 
-		string dumaProgFilepath = "\"" + _dumaProgFilepath + "\"";
+		string dumaProgFilepath = $"{_dumaProgFilepath}";
 
 		p = new System.Diagnostics.Process();
 		p.StartInfo.UseShellExecute = true;
 		p.StartInfo.FileName = dumaProgFilepath;
-		p.StartInfo.Arguments = URL + " -O " + brotilPackageFP;
-		p.StartInfo.WorkingDirectory = workingDir;
+		p.StartInfo.Arguments = $"{URL} -O {brotilPackageFP}";
+		p.StartInfo.WorkingDirectory = outputDir;
 		p.Start();
 
 		return true;
@@ -126,16 +124,13 @@ public class KWQIPackaging
 	static public bool DownloadContent_GekkoCodes_Windows(out System.Diagnostics.Process p, string _dumaProgFilepath,
 	 string displayName, string URL, string outputDir)
 	{
-		string workingDir = "\"" + outputDir + "\"";
-		string codeFP = "\"" + outputDir + "/" + displayName + ".ini\"";
-
-		string dumaProgFilepath = "\"" + _dumaProgFilepath + "\"";
+		string codeFP = $"{outputDir}/{displayName}.ini";
 
 		p = new System.Diagnostics.Process();
 		p.StartInfo.UseShellExecute = true;
-		p.StartInfo.FileName = dumaProgFilepath;
+		p.StartInfo.FileName = _dumaProgFilepath;
 		p.StartInfo.Arguments = URL + " -O " + codeFP;
-		p.StartInfo.WorkingDirectory = workingDir;
+		p.StartInfo.WorkingDirectory = outputDir
 		p.Start();
 
 		return true;
