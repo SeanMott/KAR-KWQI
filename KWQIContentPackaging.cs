@@ -96,8 +96,8 @@ public class KWQIPackaging
 		{
 			//if(System.IO.File.Exists(brotilPackageFP))
 			//	System.IO.File.Delete(brotilPackageFP);
-			//if(System.IO.File.Exists(tarPackageFP))
-			//	System.IO.File.Delete(tarPackageFP);
+			if(System.IO.File.Exists(tarPackageFP))
+				System.IO.File.Delete(tarPackageFP);
 		}
 
 		return true;
