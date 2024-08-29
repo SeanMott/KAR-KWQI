@@ -8,6 +8,7 @@ https://github.com/SeanMott/KAR-KWQI
 */
 
 using System.IO;
+using System.Net;
 
 //defines a main class for handling the package
 public class KWQIPackaging
@@ -55,14 +56,14 @@ public class KWQIPackaging
 	//unpacks a directory archive on Windows for KWQI
 	//the first layer is a brotile
 	//the second is a Tar
-	static public bool UnpackArchive_Windows(string archivePackageDir, string archivePackageName, string outputDir,
-	bool shouldDeletePackedROMFileAfterUnpacking, string brotilProgFilepath)
+	static public bool UnpackArchive_Windows(string archivePackageDir, string archivePackageName,
+	bool shouldDeletePackedROMFileAfterUnpacking)
 	{
-		string brotilPackageFP = $"{archivePackageDir}/{archivePackageName}.br";
-		string tarPackageFP = $"{archivePackageDir}/{archivePackageName}.tar";
+		//string brotilPackageFP = $"{archivePackageDir}/{archivePackageName}.br";
+		string tarPackageFP = $"{archivePackageDir}/{archivePackageName}.tar.gz";
 
 		//decompress the brotile
-		var hp = new System.Diagnostics.Process();
+		/*var hp = new System.Diagnostics.Process();
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
 		{
             FileName = brotilProgFilepath,
@@ -74,14 +75,14 @@ public class KWQIPackaging
             CreateNoWindow = false
         };
 		hp.Start();
-		hp.WaitForExit();
+		hp.WaitForExit();*/
 
 		//extract the Tar ball
-		hp = new System.Diagnostics.Process();
+		var hp = new System.Diagnostics.Process();
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
         {
             FileName = "tar",
-            Arguments = $"-xvf \"{tarPackageFP}\" -C \"{outputDir}\"",
+            Arguments = $"-xvf \"{tarPackageFP}\"",
             RedirectStandardOutput = false,
             RedirectStandardError = false,
             UseShellExecute = true,
@@ -93,20 +94,34 @@ public class KWQIPackaging
 		//clean up the brotile and the tar ball
 		if(shouldDeletePackedROMFileAfterUnpacking)
 		{
-			if(System.IO.File.Exists(brotilPackageFP))
-				System.IO.File.Delete(brotilPackageFP);
-			if(System.IO.File.Exists(tarPackageFP))
-				System.IO.File.Delete(tarPackageFP);
+			//if(System.IO.File.Exists(brotilPackageFP))
+			//	System.IO.File.Delete(brotilPackageFP);
+			//if(System.IO.File.Exists(tarPackageFP))
+			//	System.IO.File.Delete(tarPackageFP);
 		}
 
 		return true;
 	}
 
 	//downloads KWQI content Archive on Windows, regardless of the actual content
-	static public bool DownloadContent_Archive_Windows(out System.Diagnostics.Process p, string _dumaProgFilepath,
-	 string displayName, string URL, string outputDir)
+	static public bool DownloadContent_Archive_Windows(string URL, string outputDir, string packageName)
 	{
-		string brotilPackageFP = $"{outputDir}/{displayName}.br\"";
+		// Create a WebClient instance
+        using (WebClient client = new WebClient())
+        {
+            try
+            {
+                // Download the file
+                client.DownloadFile(URL, $"{outputDir}/{packageName}.tar.gz");
+                System.Console.WriteLine("File downloaded successfully.");
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine("An error occurred: " + ex.Message);
+            }
+        }
+
+		/*string brotilPackageFP = $"{outputDir}/{displayName}.br\"";
 
 		string dumaProgFilepath = $"{_dumaProgFilepath}";
 
@@ -115,23 +130,37 @@ public class KWQIPackaging
 		p.StartInfo.FileName = dumaProgFilepath;
 		p.StartInfo.Arguments = $"{URL} -O {brotilPackageFP}";
 		p.StartInfo.WorkingDirectory = outputDir;
-		p.Start();
+		p.Start();*/
 
 		return true;
 	}
 
 	//downloads gekko codes on Windows
-	static public bool DownloadContent_GekkoCodes_Windows(out System.Diagnostics.Process p, string _dumaProgFilepath,
-	 string displayName, string URL, string outputDir)
+	static public bool DownloadContent_GekkoCodes_Windows(string URL, string gekkoFileID, string outputDir)
 	{
-		string codeFP = $"{outputDir}/{displayName}.ini";
+		string codeFP = $"{outputDir}/{gekkoFileID}.ini";
 
-		p = new System.Diagnostics.Process();
+		// Create a WebClient instance
+        using (WebClient client = new WebClient())
+        {
+            try
+            {
+                // Download the file
+                client.DownloadFile(URL, $"{codeFP}");
+                System.Console.WriteLine("File downloaded successfully.");
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine("An error occurred: " + ex.Message);
+            }
+        }
+
+		/*p = new System.Diagnostics.Process();
 		p.StartInfo.UseShellExecute = true;
 		p.StartInfo.FileName = _dumaProgFilepath;
 		p.StartInfo.Arguments = URL + " -O " + codeFP;
-		p.StartInfo.WorkingDirectory = outputDir
-		p.Start();
+		p.StartInfo.WorkingDirectory = outputDir;
+		p.Start();*/
 
 		return true;
 	}
