@@ -114,11 +114,11 @@ class KWQIArchive
 		hp.WaitForExit();
 
 		//copies the contents into the copied folder
-		DirectoryInfo dir = new DirectoryInfo(package.FullName + "/" + fileName);
-		KWInstaller.CopyAllDirContents(dir, package);
+		//DirectoryInfo dir = new DirectoryInfo(package.FullName + "/" + fileName);
+		//KWInstaller.CopyAllDirContents(dir, package);
 
 		//deletes the extraction folder
-		dir.Delete(true);
+		//dir.Delete(true);
 
 		System.Console.WriteLine($"Tar Package unpacked: {package.FullName}");
 		return package;

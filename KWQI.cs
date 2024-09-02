@@ -61,7 +61,7 @@ public enum ContentType
 }
 
 //defines the KWQI struct || depends on Newtonsoft.Json
-public struct KWQI
+public class KWQI
 {
 	public ContentType type = ContentType.Game;
 	public SoftwareStage stage = SoftwareStage.Stable;
@@ -108,8 +108,6 @@ public struct KWQI
 	public string ContentDownloadURL_Switch = ""; //the URL for downloading the item on Switch
 	public string ContentDownloadURL_Linux_Switch_Sheild = ""; //the URL for downloading the item on Switch Linux (Sheild)?
 	public string ContentDownloadURL_Linux_Switch_Tablet = ""; //the URL for downloading the item on Switch Linux (Tablet)?
-
-	public KWQI() {}
 
 	//writes a KWQI file
 	public static bool WriteKWQI(DirectoryInfo dir, string filename, KWQI data)
