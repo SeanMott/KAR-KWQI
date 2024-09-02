@@ -109,8 +109,56 @@ class KWQICommonInstalls
     }
 
     //installs the latest Skin Packs
+    public static bool GetLatest_SkinPacks(FileInfo brotliEXE, DirectoryInfo installTarget)
+    {
+        //downloads the latest KARphin
+        FileInfo archive = KWQIWebClient.Download_Archive_Windows(installTarget,
+            "https://github.com/SeanMott/KAR-Workshop/releases/download/KWQI-Data-Dev/SkinPacks.tar.gz.br",
+            "SkinPacks");
+
+        //unpacks it
+        FileInfo tar = KWQIArchive.BrotliPackage_UnpackToTar_Windows(brotliEXE, archive, installTarget);
+
+        //uncompresses it
+        DirectoryInfo uncompressed = KWQIArchive.TarPackage_Unpack_Windows(tar, installTarget);
+        uncompressed = new DirectoryInfo(uncompressed.FullName + "/SkinPacks");
+
+        //moves the contents into the target directory
+        KWInstaller.CopyAllDirContents(uncompressed, installTarget);
+
+        //clean up
+        archive.Delete();
+        tar.Delete();
+        uncompressed.Delete(true);
+
+        return true;
+    }
 
     //installs the latest KARDont
+    public static bool GetLatest_KARDont(FileInfo brotliEXE, DirectoryInfo installTarget)
+    {
+        //downloads the latest KARphin
+        FileInfo archive = KWQIWebClient.Download_Archive_Windows(installTarget,
+            "https://github.com/SeanMott/KARDont/releases/download/latest/KARDont.tar.gz.br",
+            "KARDont");
+
+        //unpacks it
+        FileInfo tar = KWQIArchive.BrotliPackage_UnpackToTar_Windows(brotliEXE, archive, installTarget);
+
+        //uncompresses it
+        DirectoryInfo uncompressed = KWQIArchive.TarPackage_Unpack_Windows(tar, installTarget);
+        uncompressed = new DirectoryInfo(uncompressed.FullName + "/KARDont");
+
+        //moves the contents into the target directory
+        KWInstaller.CopyAllDirContents(uncompressed, new DirectoryInfo(installTarget + "/KARDont"));
+
+        //clean up
+        archive.Delete();
+        tar.Delete();
+        uncompressed.Delete(true);
+
+        return true;
+    }
 
     //installs the latest Client Deps
     public static bool GetLatest_ClientDeps(FileInfo brotliEXE, DirectoryInfo installTarget)
