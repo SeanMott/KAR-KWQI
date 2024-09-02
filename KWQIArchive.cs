@@ -12,22 +12,22 @@ using System.IO;
 //defines a common class for handling KWQI Archives
 class KWQIArchive
 {
-    //compresses a folder into a Tar Package on windows || returns the compressed Tar Package
+	//compresses a folder into a Tar Package on windows || returns the compressed Tar Package
 	static public FileInfo TarPackage_Compress_Windows(DirectoryInfo folderFilePathToCompress, DirectoryInfo outputFolderForTarPackage,
 	string nameTheCompressedTarShouldHave)
 	{
-        FileInfo package = new FileInfo($"{outputFolderForTarPackage.FullName}/{nameTheCompressedTarShouldHave}.tar.gz");
+		FileInfo package = new FileInfo($"{outputFolderForTarPackage.FullName}/{nameTheCompressedTarShouldHave}.tar.gz");
 
 		var hp = new System.Diagnostics.Process();
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = "tar",
-            Arguments = $"-czvf \"{package.FullName}\" \"{folderFilePathToCompress.FullName}\"",
-            RedirectStandardOutput = false,
-            RedirectStandardError = false,
-            UseShellExecute = true,
-            CreateNoWindow = false
-        };
+		{
+			FileName = "tar",
+			Arguments = $"-czvf \"{package.FullName}\" \"{folderFilePathToCompress.FullName}\"",
+			RedirectStandardOutput = false,
+			RedirectStandardError = false,
+			UseShellExecute = true,
+			CreateNoWindow = false
+		};
 		hp.Start();
 		hp.WaitForExit();
 
@@ -38,18 +38,18 @@ class KWQIArchive
 	static public FileInfo BrotliPackage_CompressFromTar_Windows(FileInfo brotliEXEFP, FileInfo tarPackageFP, DirectoryInfo outputFolderForBrotliPackage,
 	string nameTheBrotliPackageShouldHave, UInt16 compresstionLevel = 5)
 	{
-        FileInfo package = new FileInfo($"{outputFolderForBrotliPackage}/{nameTheBrotliPackageShouldHave}.br");
+		FileInfo package = new FileInfo($"{outputFolderForBrotliPackage}/{nameTheBrotliPackageShouldHave}.br");
 
 		var hp = new System.Diagnostics.Process();
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = brotliEXEFP.FullName,
-            Arguments = $"-q {compresstionLevel} -f \"{tarPackageFP.FullName}\" -o \"{package.FullName}\"",
-            RedirectStandardOutput = false,
-            RedirectStandardError = false,
-            UseShellExecute = true,
-            CreateNoWindow = false
-        };
+		{
+			FileName = brotliEXEFP.FullName,
+			Arguments = $"-q {compresstionLevel} -f \"{tarPackageFP.FullName}\" -o \"{package.FullName}\"",
+			RedirectStandardOutput = false,
+			RedirectStandardError = false,
+			UseShellExecute = true,
+			CreateNoWindow = false
+		};
 		hp.Start();
 		hp.WaitForExit();
 
@@ -59,18 +59,18 @@ class KWQIArchive
 	//uncompresses a Brotli Package into a Tar Package on windows || returns the compressed tar package
 	static public FileInfo BrotliPackage_UnpackToTar_Windows(FileInfo brotliEXEFP, FileInfo brotliPackageFP, DirectoryInfo outputFolderForTARPackage)
 	{
-        FileInfo package = new FileInfo($"{outputFolderForTARPackage.FullName}/{Path.GetFileNameWithoutExtension(brotliPackageFP.FullName)}.tar.gz");
+		FileInfo package = new FileInfo($"{outputFolderForTARPackage.FullName}/{Path.GetFileNameWithoutExtension(brotliPackageFP.FullName)}.tar.gz");
 
 		var hp = new System.Diagnostics.Process();
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = brotliEXEFP.FullName,
-            Arguments = $"--decompress \"{brotliPackageFP.FullName}\" -o \"{package.FullName}\"",
-            RedirectStandardOutput = false,
-            RedirectStandardError = false,
-            UseShellExecute = true,
-            CreateNoWindow = false
-        };
+		{
+			FileName = brotliEXEFP.FullName,
+			Arguments = $"--decompress \"{brotliPackageFP.FullName}\" -o \"{package.FullName}\"",
+			RedirectStandardOutput = false,
+			RedirectStandardError = false,
+			UseShellExecute = true,
+			CreateNoWindow = false
+		};
 		hp.Start();
 		hp.WaitForExit();
 
@@ -81,45 +81,21 @@ class KWQIArchive
 	//uncompresses a Tar Package into it's raw folder on windows || returns the uncompressed folder
 	static public DirectoryInfo TarPackage_Unpack_Windows(FileInfo tarPackageFP, DirectoryInfo outputFolderForRawFolder)
 	{
-		//removes any extra packages
-		//Get the filename without the path
-        string fileName = Path.GetFileName(tarPackageFP.FullName);
-
-        // Loop to remove all extensions
-        while (true)
-        {
-            string newFileName = Path.GetFileNameWithoutExtension(fileName);
-            if (newFileName == fileName)
-                break;
-
-            fileName = newFileName;
-        }
-
-		//the extracted contents
-        DirectoryInfo package = new DirectoryInfo($"{outputFolderForRawFolder.FullName}/{fileName}");
-		package.Create();
-
 		var hp = new System.Diagnostics.Process();
 		hp.StartInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = "tar",
-            Arguments = $"-xzvf \"{tarPackageFP.ToString()}\" -C \"{package.ToString()}\"",
-            WorkingDirectory = outputFolderForRawFolder.FullName,
+		{
+			FileName = "tar",
+			Arguments = $"-xzvf \"{tarPackageFP.ToString()}\"",
+			WorkingDirectory = outputFolderForRawFolder.FullName,
 			RedirectStandardOutput = false,
-            RedirectStandardError = false,
-            UseShellExecute = true,
-            CreateNoWindow = false
-        };
+			RedirectStandardError = false,
+			UseShellExecute = true,
+			CreateNoWindow = false
+		};
 		hp.Start();
 		hp.WaitForExit();
 
-		//copies the contents into the copied folder
-		DirectoryInfo dir = new DirectoryInfo(package.FullName + "/" + fileName);
-		KWInstaller.CopyAllDirContents(dir, package);
-
-		//deletes the extraction folder
-		dir.Delete(true);
-
+		DirectoryInfo package = new DirectoryInfo(outputFolderForRawFolder.FullName);
 		System.Console.WriteLine($"Tar Package unpacked: {package.FullName}");
 		return package;
 	}
@@ -132,11 +108,11 @@ class KWQIArchive
 	}
 
 	//takes a KWQI Archive and unpacks it to the raw folder || returns the final unpackaged folder
-	static public DirectoryInfo Unpack_Windows(FileInfo brotliEXEFP, FileInfo archiveFP, DirectoryInfo outputFolder)
+	static public DirectoryInfo Unpack_Windows(FileInfo brotliEXEFP, FileInfo archiveFP, DirectoryInfo outputFolder, string uncompressedFolderName)
 	{
 		FileInfo tarPackage = BrotliPackage_UnpackToTar_Windows(brotliEXEFP, archiveFP, outputFolder);
 		DirectoryInfo uncompressedInfo = TarPackage_Unpack_Windows(tarPackage, outputFolder);
-		tarPackage.Delete(); //cleans up the tar package
+		tarPackage.Delete();
 		return uncompressedInfo;
 	}
 }
