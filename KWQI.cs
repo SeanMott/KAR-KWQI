@@ -1,8 +1,5 @@
 /*
-0.2.0 implementation of the KAR Workshop Quick Install format.
-
-KWQI is a JSON based text/binary format used for downloading and managing content. 
-From custom ROMs to audio files and tools.
+0.3.0 implementation of how the KAR Workshop Quick Install format.
 
 The spec for the project and latest version can be found at the Github.
 https://github.com/SeanMott/KAR-KWQI
@@ -115,9 +112,9 @@ public struct KWQI
 	public KWQI() {}
 
 	//writes a KWQI file
-	public static bool WriteKWQI(string dir, string filename, KWQI data)
+	public static bool WriteKWQI(DirectoryInfo dir, string filename, KWQI data)
 	{
-		System.IO.StreamWriter file = new System.IO.StreamWriter(dir + "/" + filename + ".KWQI");
+		System.IO.StreamWriter file = new System.IO.StreamWriter(dir.FullName + "/" + filename + ".KWQI");
 		file.Write(JsonConvert.SerializeObject(data));
 		file.Close();
 
